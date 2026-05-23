@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* TipTap editor resets */
+.tiptap {
+  @apply outline-none min-h-[60px] text-sm leading-relaxed text-gray-800;
+}
+.tiptap p {
+  @apply mb-2 last:mb-0;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  @apply text-gray-400 float-left h-0 pointer-events-none;
+  content: attr(data-placeholder);
+}

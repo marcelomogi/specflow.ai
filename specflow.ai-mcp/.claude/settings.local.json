@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"EXIT:$?\")",
+      "PowerShell(cd \"C:\\\\Users\\\\marcelo.moraes\\\\Documents\\\\workspace\\\\mba\\\\repo\\\\specflow.ai-mcp\"; npx tsc --noEmit 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "Bash(timeout 4 node dist/index.js)",
+      "Bash(node -e \"require\\('mammoth'\\); console.log\\('mammoth ok'\\)\")",
+      "Bash(node -e \"require\\('pdfjs-dist'\\); console.log\\('pdfjs ok'\\)\")",
+      "Bash(node -e \"const m = require\\('mammoth'\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(npm run *)",
+      "Bash(node dist/index.js)",
+      "Bash(curl -s \"http://localhost:3001/agent/prompt?mode=coauthor\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\)\\); console.log\\('mode:', d.mode\\); console.log\\('tools:', d.context.available_tools\\); console.log\\('prompt_start:', d.prompt.slice\\(0,80\\)\\)\")",
+      "Bash(curl -s \"http://localhost:3001/agent/prompt?mode=ingest\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\)\\); console.log\\('mode:', d.mode\\); console.log\\('tools:', d.context.available_tools\\)\")",
+      "Bash(curl -s \"http://localhost:3001/agent/prompt?mode=invalid\")",
+      "Bash(node -e \"process.stdin.resume\\(\\); let b=''; process.stdin.on\\('data',c=>b+=c\\); process.stdin.on\\('end',\\(\\)=>console.log\\('bad mode:', JSON.parse\\(b\\).error\\)\\)\")",
+      "Bash(kill %1)",
+      "Bash(node -e ' *)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3001\")",
+      "Bash(taskkill /PID 16928 /F)",
+      "Bash(MCP_HTTP_PORT=3099 node dist/index.js)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.scripts,null,2\\)\\)\")",
+      "Bash(winget install *)",
+      "Bash(where ngrok *)",
+      "Bash(ngrok --version)",
+      "Bash(node -e \"const {execSync}=require\\('child_process'\\); try{console.log\\(execSync\\('ngrok --version',{stdio:'pipe'}\\).toString\\(\\)\\)}catch\\(e\\){console.log\\('stderr:',e.stderr?.toString\\(\\)\\)}\")",
+      "Bash(npm bin *)"
+    ]
+  }
+}
