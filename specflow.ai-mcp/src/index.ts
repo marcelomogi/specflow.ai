@@ -89,7 +89,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_create",
-    "Create a new document in draft status",
+    "[specflowia] Create a new specflowia document in draft status. Use when the PM wants to start authoring a new PRD, policy, contract, or runbook from scratch. Requires title, doc_type, and owner_id.",
     DocumentCreateSchema.shape,
     async (params) => {
       log("document_create", params);
@@ -101,7 +101,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_get",
-    "Retrieve a document with its ordered blocks and relations",
+    "[specflowia] Retrieve a specflowia document by ID, including its ordered blocks and relations. Use before editing, reviewing, or continuing work on an existing document.",
     DocumentGetSchema.shape,
     async (params) => {
       log("document_get", params);
@@ -113,7 +113,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_publish",
-    "Publish a document (status → approved). Fails if any block has unresolved conflicts.",
+    "[specflowia] Publish a specflowia document, changing its status from draft to approved. Fails if any block has unresolved conflicts. Use only when the PM explicitly confirms the document is ready to publish.",
     DocumentPublishSchema.shape,
     async (params) => {
       log("document_publish", params);
@@ -125,7 +125,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_import",
-    "Import raw text content as a new document, auto-segmenting it into blocks",
+    "[specflowia] Create a new specflowia document and auto-segment its content into blocks in a single call. Use when the PM provides existing raw text (from a file, paste, or extraction) and there is no document yet. Prefer over document_create + document_ingest when starting from scratch with existing content.",
     DocumentImportSchema.shape,
     async (params) => {
       log("document_import", params);
@@ -137,7 +137,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_update_rationale",
-    "Update the rationale (motivation/context) of an existing document",
+    "[specflowia] Update the motivation and context (rationale) of an existing specflowia document. Use after improve_rationale returns a suggestion and the PM confirms, or when the PM wants to manually revise the document rationale.",
     DocumentUpdateRationaleSchema.shape,
     async (params) => {
       log("document_update_rationale", params);
@@ -149,7 +149,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_ingest",
-    "Semantically chunk raw text into blocks using an LLM and persist them as draft blocks in an existing document. Never alters the original content.",
+    "[specflowia] Add raw text to an existing specflowia document by semantically chunking it into draft blocks. Use when the document already exists and the PM wants to append or import additional content into it.",
     DocumentIngestSchema.shape,
     async (params) => {
       log("document_ingest", params);
@@ -161,7 +161,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_delete",
-    "Permanently delete a document and all its blocks (cascade). Requires explicit PM confirmation before calling.",
+    "[specflowia] Permanently delete a specflowia document and all its blocks (cascade). This action is irreversible. Always ask for explicit PM confirmation before calling. Never call speculatively.",
     DocumentDeleteSchema.shape,
     async (params) => {
       log("document_delete", params);
@@ -173,7 +173,7 @@ function createServer(): McpServer {
 
   server.tool(
     "document_list",
-    "List all documents ordered by most recently updated. Optionally filter by doc_type and/or status. Returns metadata only — no block content.",
+    "[specflowia] List all specflowia documents ordered by most recently updated. Use at the start of every session to show the PM what documents exist, and after any document_create or document_import to refresh the list. Optionally filter by doc_type or status.",
     DocumentListSchema.shape,
     async (params) => {
       log("document_list", params);
@@ -185,7 +185,7 @@ function createServer(): McpServer {
 
   server.tool(
     "improve_rationale",
-    "Generate or improve the rationale of a document by analysing its blocks with an LLM. Returns the suggested text — does not save it; the PM reviews and confirms.",
+    "[specflowia] Analyse the blocks of a specflowia document with an LLM and generate or improve its rationale text. Returns a suggestion only — does not save. After the PM reviews and confirms, persist the result using document_update_rationale.",
     ImproveRationaleSchema.shape,
     async (params) => {
       log("improve_rationale", params);
@@ -199,7 +199,7 @@ function createServer(): McpServer {
 
   server.tool(
     "block_create",
-    "Add a new block to a document at an optional position",
+    "[specflowia] Add a new content block to a specflowia document at an optional position. Use when the PM approves new content to be persisted. All document content must go through this tool — never output content as free text in chat.",
     BlockCreateSchema.shape,
     async (params) => {
       log("block_create", params);
@@ -211,7 +211,7 @@ function createServer(): McpServer {
 
   server.tool(
     "block_update",
-    "Update a block's content and rationale. Fails if the block is frozen.",
+    "[specflowia] Update the content and rationale of an existing specflowia block. Fails if the block is frozen. Use when the PM approves an edit to an existing block.",
     BlockUpdateSchema.shape,
     async (params) => {
       log("block_update", params);
@@ -223,7 +223,7 @@ function createServer(): McpServer {
 
   server.tool(
     "block_freeze",
-    "Freeze or unfreeze a block to protect it from edits",
+    "[specflowia] Freeze or unfreeze a specflowia block to protect it from further edits. Frozen blocks cannot be updated. Use when the PM wants to lock approved content.",
     BlockFreezeSchema.shape,
     async (params) => {
       log("block_freeze", params);
@@ -235,7 +235,7 @@ function createServer(): McpServer {
 
   server.tool(
     "block_get_history",
-    "Retrieve the full version history of a block",
+    "[specflowia] Retrieve the full version history of a specflowia block, including all past content and rationale changes. Use when the PM wants to audit changes or revert to a previous version.",
     BlockGetHistorySchema.shape,
     async (params) => {
       log("block_get_history", params);
@@ -247,7 +247,7 @@ function createServer(): McpServer {
 
   server.tool(
     "block_reorder",
-    "Update the block ordering of a document",
+    "[specflowia] Change the order of blocks in a specflowia document by providing the full ordered list of block UUIDs. Use when the PM wants to restructure the document flow.",
     BlockReorderSchema.shape,
     async (params) => {
       log("block_reorder", params);
@@ -261,7 +261,7 @@ function createServer(): McpServer {
 
   server.tool(
     "relation_detect",
-    "Find semantically similar blocks in approved documents using vector search",
+    "[specflowia] Find specflowia blocks semantically similar to a given block using vector search across approved documents. Use to surface potential conflicts, dependencies, or related content before creating or updating a block.",
     RelationDetectSchema.shape,
     async (params) => {
       log("relation_detect", params);
@@ -273,7 +273,7 @@ function createServer(): McpServer {
 
   server.tool(
     "relation_register",
-    "Register a relation between two blocks. Use relation_type='conflict' to flag a conflict.",
+    "[specflowia] Register a typed relation between two specflowia blocks. Relation types: conflict, depends_on, evolves_from, similar. Use after relation_detect surfaces a meaningful connection, or when the PM explicitly identifies a relationship between blocks.",
     RelationRegisterSchema.shape,
     async (params) => {
       log("relation_register", params);
@@ -285,7 +285,7 @@ function createServer(): McpServer {
 
   server.tool(
     "kb_search",
-    "Semantic search over approved documents in the knowledge base",
+    "[specflowia] Semantic search over all approved specflowia documents in the knowledge base. Use when the PM wants to find existing content by topic, keyword, or theme before creating new documents or blocks.",
     KbSearchSchema.shape,
     async (params) => {
       log("kb_search", params);
