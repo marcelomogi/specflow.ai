@@ -28,7 +28,9 @@
       "Bash(where ngrok *)",
       "Bash(ngrok --version)",
       "Bash(node -e \"const {execSync}=require\\('child_process'\\); try{console.log\\(execSync\\('ngrok --version',{stdio:'pipe'}\\).toString\\(\\)\\)}catch\\(e\\){console.log\\('stderr:',e.stderr?.toString\\(\\)\\)}\")",
-      "Bash(npm bin *)"
+      "Bash(npm bin *)",
+      "Bash(git remote *)",
+      "Bash(git push *)"
     ]
   }
 }
