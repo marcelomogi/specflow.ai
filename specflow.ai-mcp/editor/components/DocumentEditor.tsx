@@ -42,8 +42,6 @@ export default function DocumentEditor({ initialDoc, initialBlocks, initialRelat
   const frozenCount = blocks.filter(b => b.status === 'frozen').length
   const hasConflicts = conflictCount > 0
 
-  const relatedTitles: Record<string, string> = {}
-
   const handleMcpOffline = useCallback(() => setMcpOffline(true), [])
 
   // ── Realtime subscription ────────────────────────────────────────────────
@@ -347,7 +345,6 @@ export default function DocumentEditor({ initialDoc, initialBlocks, initialRelat
               block={block}
               index={i}
               relations={relations.filter(r => r.source_block_id === block.block_id)}
-              relatedTitles={relatedTitles}
               isRecentlyUpdated={recentlyUpdated.has(block.block_id)}
               mcpOffline={mcpOffline}
               onMcpOffline={handleMcpOffline}

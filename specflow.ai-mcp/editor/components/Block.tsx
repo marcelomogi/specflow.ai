@@ -33,7 +33,6 @@ interface Props {
   block: BlockType
   index: number
   relations: BlockRelation[]
-  relatedTitles: Record<string, string>
   isRecentlyUpdated: boolean
   mcpOffline: boolean
   onMcpOffline: () => void
@@ -45,9 +44,7 @@ export default function Block({
   block,
   index,
   relations,
-  relatedTitles: _relatedTitles,
   isRecentlyUpdated,
-  mcpOffline: _mcpOffline,
   onMcpOffline,
   onSelect,
   onBlockChange,
@@ -278,7 +275,6 @@ export default function Block({
         <ConflictBanner
           blockId={block.block_id}
           relations={relations}
-          relatedTitles={relatedTitles}
           onBlockChange={(patch) => onBlockChange({ ...blockRef.current, ...patch })}
         />
       )}

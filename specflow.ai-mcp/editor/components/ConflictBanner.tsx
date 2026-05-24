@@ -13,11 +13,10 @@ interface ConflictingBlockInfo {
 interface Props {
   blockId: string
   relations: BlockRelation[]
-  relatedTitles: Record<string, string>
   onBlockChange: (updates: Partial<{ status: BlockStatus }>) => void
 }
 
-export default function ConflictBanner({ blockId, relations, relatedTitles: _relatedTitles, onBlockChange }: Props) {
+export default function ConflictBanner({ blockId, relations, onBlockChange }: Props) {
   const conflicts = relations.filter(r => r.relation_type === 'conflict')
   const [dismissed, setDismissed] = useState(false)
   const [resolving, setResolving] = useState<string | null>(null)
