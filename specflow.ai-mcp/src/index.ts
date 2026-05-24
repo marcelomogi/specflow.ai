@@ -286,13 +286,13 @@ function createServer(): McpServer {
 
 // ─── HTTP transport (port 3001) ───────────────────────────────────────────────
 
-const HTTP_PORT = Number(process.env.MCP_HTTP_PORT ?? 3001);
+const HTTP_PORT = Number(process.env.PORT ?? process.env.MCP_HTTP_PORT ?? 3001);
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.MCP_CORS_ORIGIN ?? "http://localhost:3000",
+    origin: process.env.MCP_CORS_ORIGIN ? process.env.MCP_CORS_ORIGIN.split(',') : true,
     methods: ["POST", "GET", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Accept", "Mcp-Session-Id"],
     exposedHeaders: ["Mcp-Session-Id"],
