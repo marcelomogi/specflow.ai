@@ -1,6 +1,8 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import type { Document, Block, BlockRelation } from '@/lib/types'
+import { OWNER_COOKIE, findUser } from '@/lib/users'
 import DocumentEditor from '@/components/DocumentEditor'
 
 export const revalidate = 0
@@ -10,6 +12,13 @@ interface Props {
 }
 
 export default async function DocumentPage({ params }: Props) {
+  const cookieStore = await cookies()
+  const ownerId = cookieStore.get(OWNER_COOKIE)?.value
+
+  if (!ownerId || !findUser(ownerId)) {
+    redirect('/')
+  }
+
   const { id } = await params
   const sb = createServerSupabaseClient()
 
@@ -51,6 +60,7 @@ export default async function DocumentPage({ params }: Props) {
       initialDoc={document}
       initialBlocks={blocks}
       initialRelations={relations}
+      ownerId={ownerId}
     />
   )
 }

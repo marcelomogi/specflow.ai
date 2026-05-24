@@ -11,8 +11,6 @@ import StatusPill from './StatusPill'
 import ConflictBanner from './ConflictBanner'
 import RationaleModal from './RationaleModal'
 
-const OWNER_ID = '00000000-0000-0000-0000-000000000001'
-
 // Shape returned by relation_detect (new pipeline: LLM-classified + graph-expanded)
 interface DetectedRelation {
   block_id: string
@@ -38,6 +36,7 @@ interface Props {
   relations: BlockRelation[]
   isRecentlyUpdated: boolean
   mcpOffline: boolean
+  ownerId: string
   onMcpOffline: () => void
   onSelect: (blockId: string, history: BlockVersion[]) => void
   onBlockChange: (updated: BlockType) => void
@@ -48,6 +47,7 @@ export default function Block({
   index,
   relations,
   isRecentlyUpdated,
+  ownerId,
   onMcpOffline,
   onSelect,
   onBlockChange,
@@ -196,7 +196,7 @@ export default function Block({
       .from('block')
       .update({
         status: nextFrozen ? 'frozen' : 'draft',
-        frozen_by: nextFrozen ? OWNER_ID : null,
+        frozen_by: nextFrozen ? ownerId : null,
       })
       .eq('block_id', block.block_id)
       .select()

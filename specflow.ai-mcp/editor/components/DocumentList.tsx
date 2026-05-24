@@ -6,10 +6,12 @@ import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import type { Document } from '@/lib/types'
 import { createClient } from '@/lib/supabase'
+import { findUser } from '@/lib/users'
 import StatusPill from './StatusPill'
 import NewDocumentModal from './NewDocumentModal'
 
-export default function DocumentList({ initial }: { initial: Document[] }) {
+export default function DocumentList({ initial, ownerId }: { initial: Document[]; ownerId: string }) {
+  const currentUser = findUser(ownerId)
   const [docs, setDocs] = useState(initial)
   const [showModal, setShowModal] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState<Document | null>(null)
@@ -44,12 +46,28 @@ export default function DocumentList({ initial }: { initial: Document[] }) {
           <h1 className="text-xl font-semibold text-gray-900">SpecFlowIA</h1>
           <p className="text-sm text-gray-500">Documentos corporativos</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
-        >
-          + Novo documento
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Current user badge */}
+          {currentUser && (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg">
+              <span className="text-base">{currentUser.emoji}</span>
+              <span className="text-sm font-medium text-gray-700">{currentUser.name}</span>
+              <button
+                onClick={() => router.push('/')}
+                title="Trocar usuário"
+                className="text-xs text-gray-400 hover:text-indigo-600 transition ml-1"
+              >
+                trocar
+              </button>
+            </div>
+          )}
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
+          >
+            + Novo documento
+          </button>
+        </div>
       </header>
 
       {/* List */}
@@ -102,6 +120,7 @@ export default function DocumentList({ initial }: { initial: Document[] }) {
 
       {showModal && (
         <NewDocumentModal
+          ownerId={ownerId}
           onClose={() => setShowModal(false)}
           onDocCreated={handleDocCreated}
         />

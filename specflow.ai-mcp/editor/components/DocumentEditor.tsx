@@ -16,9 +16,10 @@ interface Props {
   initialDoc: Document
   initialBlocks: BlockType[]
   initialRelations: BlockRelation[]
+  ownerId: string
 }
 
-export default function DocumentEditor({ initialDoc, initialBlocks, initialRelations }: Props) {
+export default function DocumentEditor({ initialDoc, initialBlocks, initialRelations, ownerId }: Props) {
   const [doc, setDoc] = useState(initialDoc)
   const [blocks, setBlocks] = useState(initialBlocks)
   const [relations] = useState(initialRelations)
@@ -347,6 +348,7 @@ export default function DocumentEditor({ initialDoc, initialBlocks, initialRelat
               relations={relations.filter(r => r.source_block_id === block.block_id)}
               isRecentlyUpdated={recentlyUpdated.has(block.block_id)}
               mcpOffline={mcpOffline}
+              ownerId={ownerId}
               onMcpOffline={handleMcpOffline}
               onSelect={handleSelect}
               onBlockChange={handleBlockChange}

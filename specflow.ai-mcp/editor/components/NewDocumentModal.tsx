@@ -6,8 +6,6 @@ import type { Document, DocType, DocumentOrigin } from '@/lib/types'
 import { createClient } from '@/lib/supabase'
 import { extractText } from '@/lib/extractText'
 
-const OWNER_ID = '00000000-0000-0000-0000-000000000001'
-
 const DOC_TYPES: { value: DocType; label: string }[] = [
   { value: 'prd',      label: 'PRD' },
   { value: 'policy',   label: 'Policy' },
@@ -24,11 +22,12 @@ const ORIGINS: { value: DocumentOrigin; label: string }[] = [
 type Step = 'choose' | 'create' | 'import'
 
 interface Props {
+  ownerId: string
   onClose: () => void
   onDocCreated: (doc: Document) => void
 }
 
-export default function NewDocumentModal({ onClose, onDocCreated }: Props) {
+export default function NewDocumentModal({ ownerId, onClose, onDocCreated }: Props) {
   const [step, setStep] = useState<Step>('choose')
 
   // Shared fields
@@ -59,7 +58,7 @@ export default function NewDocumentModal({ onClose, onDocCreated }: Props) {
         .insert({
           title: title.trim(),
           doc_type: docType,
-          owner_id: OWNER_ID,
+          owner_id: ownerId,
           status: 'draft',
           block_order: [],
           rationale: rationale.trim() || null,
@@ -93,7 +92,7 @@ export default function NewDocumentModal({ onClose, onDocCreated }: Props) {
         .insert({
           title: title.trim(),
           doc_type: docType,
-          owner_id: OWNER_ID,
+          owner_id: ownerId,
           status: 'draft',
           block_order: [],
           rationale: rationale.trim() || null,
