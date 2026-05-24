@@ -52,4 +52,6 @@ export interface BlockRelation {
   confidence: number | null
   description: string
   created_at: string
+  /** null = pending, true = author confirmed, false = author rejected */
+  confirmed_by_author: boolean | null
 }

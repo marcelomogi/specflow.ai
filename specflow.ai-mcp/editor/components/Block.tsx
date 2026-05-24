@@ -12,16 +12,19 @@ import ConflictBanner from './ConflictBanner'
 import RationaleModal from './RationaleModal'
 
 const OWNER_ID = '00000000-0000-0000-0000-000000000001'
-const CONFLICT_SIMILARITY_THRESHOLD = 0.75
 
-// Shape returned by relation_detect
+// Shape returned by relation_detect (new pipeline: LLM-classified + graph-expanded)
 interface DetectedRelation {
   block_id: string
   document_title: string
   content_excerpt: string
-  similarity_score: number
-  suggested_relation_type: string
   block_status?: string
+  similarity_score: number | null   // null for graph-only candidates
+  relation_type: string             // classified by LLM
+  confidence: number
+  explanation: string
+  origin: 'inferred'
+  source: 'vector' | 'graph'
 }
 
 // Pending conflict waiting for PM confirmation
@@ -133,22 +136,19 @@ export default function Block({
     try {
       const results = await callMCP<DetectedRelation[]>('relation_detect', {
         block_id: blockId,
-        relation_types: ['conflict', 'similar'],
+        // No relation_types filter — let LLM classify all types; server already excludes 'none'
         threshold: 0.75,
       })
 
       console.log('[detectConflicts] resultados brutos:', results)
 
+      // All returned results are LLM-classified (non-'none'). Only exclude deprecated blocks.
+      // Graph candidates (source='graph') have similarity_score=null — still show them.
       const potentialConflicts = results.filter(
-        r =>
-          r.similarity_score >= CONFLICT_SIMILARITY_THRESHOLD &&
-          r.block_status !== 'deprecated'
+        r => r.block_status !== 'deprecated'
       )
 
-      console.log(
-        `[detectConflicts] acima do threshold ${CONFLICT_SIMILARITY_THRESHOLD}:`,
-        potentialConflicts
-      )
+      console.log('[detectConflicts] relações detectadas:', potentialConflicts)
 
       if (potentialConflicts.length > 0) {
         setPendingConflicts(potentialConflicts.map(r => ({ detected: r })))
@@ -158,21 +158,25 @@ export default function Block({
     }
   }
 
-  // ── Register confirmed conflict ───────────────────────────────────────────
+  // ── Register confirmed relation ───────────────────────────────────────────
   async function handleRegisterConflict(pending: PendingConflict) {
     setIsRegistering(true)
+    const { relation_type, confidence, explanation, document_title, block_id: targetId, similarity_score } = pending.detected
     try {
       await callMCP('relation_register', {
         source_block_id: block.block_id,
-        target_block_id: pending.detected.block_id,
-        relation_type: 'conflict',
+        target_block_id: targetId,
+        relation_type,
         origin: 'inferred',
-        description: `Conflito detectado com "${pending.detected.document_title}" (similaridade ${Math.round(pending.detected.similarity_score * 100)}%)`,
-        confidence: pending.detected.similarity_score,
+        description: `${explanation} (fonte: "${document_title}"${similarity_score != null ? `, similaridade ${Math.round(similarity_score * 100)}%` : ', via grafo de relações'})`,
+        confidence,
       })
-      // relation_register sets source block status to 'conflict' on the server;
-      // Realtime will propagate the block update, but we update locally too
-      onBlockChange({ ...blockRef.current, status: 'conflict' })
+      // Only mark block as 'conflict' when the relation type is actually conflict
+      if (relation_type === 'conflict') {
+        onBlockChange({ ...blockRef.current, status: 'conflict' })
+      }
+      // For depends_on / evolves_from / similar the block stays in its current status;
+      // the relation is recorded in the DB for graph traversal
     } catch (err) {
       console.error('[Block] relation_register error:', err)
     } finally {
@@ -279,46 +283,83 @@ export default function Block({
         />
       )}
 
-      {/* Pending conflict banners (from relation_detect, awaiting PM confirmation) */}
+      {/* Pending relation banners (from relation_detect, awaiting PM confirmation) */}
       {pendingConflicts.map((pending, i) => {
-        const pct = Math.round(pending.detected.similarity_score * 100)
-        const strength = pct >= 90 ? 'sugestão forte' : pct >= 80 ? 'sugestão moderada' : 'sugestão fraca'
+        const { relation_type, source, similarity_score, confidence, explanation, document_title, content_excerpt } = pending.detected
+
+        const RELATION_LABEL: Record<string, string> = {
+          conflict:     '⚠️ Conflito detectado',
+          depends_on:   '🔗 Dependência detectada',
+          evolves_from: '🔄 Evolução detectada',
+          similar:      '📄 Conteúdo similar detectado',
+        }
+        const RELATION_VERB: Record<string, string> = {
+          conflict:     'contradiz',
+          depends_on:   'depende de',
+          evolves_from: 'parece evoluir de',
+          similar:      'cobre território similar a',
+        }
+
+        const label = RELATION_LABEL[relation_type] ?? '🔍 Relação detectada'
+        const verb  = RELATION_VERB[relation_type]  ?? 'se relaciona com'
+        const pct   = Math.round(confidence * 100)
+
         return (
           <div
             key={i}
             className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 text-xs text-amber-800"
           >
-            <span className="mt-0.5 shrink-0">⚠️</span>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="font-semibold">Possível conflito detectado</p>
-                <span
-                  className={`inline-flex items-center px-1.5 py-0.5 rounded font-bold tabular-nums ${
-                    pct >= 90
-                      ? 'bg-red-100 text-red-700'
-                      : pct >= 80
-                      ? 'bg-amber-200 text-amber-800'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}
-                >
-                  {pct}%
-                </span>
-                <span className="text-amber-500">{strength}</span>
+              {/* Header row */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="font-semibold">{label}</p>
+
+                {/* Source badge */}
+                {source === 'graph' ? (
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-medium">
+                    via relação
+                  </span>
+                ) : similarity_score != null ? (
+                  <span
+                    className={`inline-flex items-center px-1.5 py-0.5 rounded font-bold tabular-nums ${
+                      similarity_score >= 0.90
+                        ? 'bg-red-100 text-red-700'
+                        : similarity_score >= 0.80
+                        ? 'bg-amber-200 text-amber-800'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}
+                  >
+                    {Math.round(similarity_score * 100)}% similar
+                  </span>
+                ) : null}
+
+                {/* LLM confidence */}
+                <span className="text-amber-500 tabular-nums">{pct}% confiança</span>
               </div>
-              <p className="mt-0.5 text-amber-700 truncate">
-                Com &ldquo;{pending.detected.document_title}&rdquo;
+
+              {/* Relation description */}
+              <p className="mt-0.5 text-amber-700">
+                Este bloco <span className="font-medium">{verb}</span>{' '}
+                &ldquo;{document_title}&rdquo;
               </p>
-              <p className="mt-1 text-amber-600 line-clamp-2 italic">
-                &ldquo;{pending.detected.content_excerpt}&rdquo;
+
+              {/* LLM explanation */}
+              <p className="mt-0.5 text-amber-600 italic">{explanation}</p>
+
+              {/* Conflicting block excerpt */}
+              <p className="mt-1 text-amber-500 line-clamp-2 italic">
+                &ldquo;{content_excerpt}&rdquo;
               </p>
             </div>
+
+            {/* Actions */}
             <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
               <button
                 onClick={() => handleRegisterConflict(pending)}
                 disabled={isRegistering}
                 className="px-2 py-1 rounded-md bg-amber-600 text-white text-[11px] font-medium hover:bg-amber-700 disabled:opacity-50 transition"
               >
-                {isRegistering ? '…' : 'Registrar conflito'}
+                {isRegistering ? '…' : 'Registrar'}
               </button>
               <button
                 onClick={() => handleDismissConflict(pending)}
@@ -329,8 +370,7 @@ export default function Block({
             </div>
           </div>
         )
-      }
-      )}
+      })}
 
       {/* TipTap editor */}
       <div className={`rounded-lg px-1 ${isFrozen ? 'opacity-60 cursor-not-allowed' : ''}`}>
