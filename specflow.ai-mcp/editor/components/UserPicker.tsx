@@ -17,7 +17,10 @@ export default function UserPicker() {
           {MOCK_USERS.map(user => (
             <button
               key={user.id}
-              onClick={() => { window.location.href = `/api/select-owner?owner_id=${user.id}` }}
+              onClick={async () => {
+                await fetch(`/api/select-owner?owner_id=${user.id}`)
+                window.location.href = '/documents'
+              }}
               className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl px-5 py-4 text-left hover:border-indigo-400 hover:shadow-sm transition"
             >
               <span className="text-3xl">{user.emoji}</span>

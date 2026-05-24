@@ -6,12 +6,12 @@ export function GET(req: NextRequest) {
   const isValid = MOCK_USERS.some(u => u.id === ownerId)
 
   if (!isValid) {
-    return NextResponse.redirect(new URL('/', req.url))
+    return NextResponse.json({ error: 'Invalid owner_id' }, { status: 400 })
   }
 
-  const response = NextResponse.redirect(new URL('/documents', req.url))
+  const response = NextResponse.json({ ok: true })
   response.cookies.set(OWNER_COOKIE, ownerId, {
-    httpOnly: false,  // client components can read it too
+    httpOnly: false,
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 7, // 1 week
