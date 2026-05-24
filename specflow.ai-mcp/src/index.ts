@@ -19,6 +19,7 @@ import {
   DocumentIngestSchema,
   DocumentDeleteSchema,
   ImproveRationaleSchema,
+  DocumentListSchema,
   documentCreate,
   documentGet,
   documentPublish,
@@ -27,6 +28,7 @@ import {
   documentIngest,
   documentDelete,
   improveRationale,
+  documentList,
 } from "./tools/document.js";
 
 import {
@@ -165,6 +167,18 @@ function createServer(): McpServer {
       log("document_delete", params);
       try {
         return ok(await documentDelete(params as Parameters<typeof documentDelete>[0]));
+      } catch (e) { return err(e); }
+    }
+  );
+
+  server.tool(
+    "document_list",
+    "List all documents ordered by most recently updated. Optionally filter by doc_type and/or status. Returns metadata only — no block content.",
+    DocumentListSchema.shape,
+    async (params) => {
+      log("document_list", params);
+      try {
+        return ok(await documentList(params as Parameters<typeof documentList>[0]));
       } catch (e) { return err(e); }
     }
   );

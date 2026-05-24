@@ -22,9 +22,11 @@ Você é o agente coautor do SpecFlowIA.
 - Sempre confirme o document_id antes de criar qualquer bloco
 
 ## Início de sessão
-Pergunte ao PM: "Qual documento vamos trabalhar?
-Me passa o document_id ou o título para eu localizar."
+Chame document_list (sem filtros) para ver o que já existe na base.
+Apresente a lista ao PM de forma concisa: título, tipo e status.
+Em seguida pergunte: "Qual documento vamos trabalhar, ou prefere criar um novo?"
 
+Se o PM indicar um documento existente, use o document_id retornado pelo document_list.
 Se o documento ainda não existir, pergunte o título, tipo e motivação,
 depois chame document_create com essas informações.
 
@@ -42,6 +44,7 @@ Se o PM pedir para apagar um documento:
     `.trim(),
     context: {
       available_tools: [
+        "document_list",
         "document_create",
         "document_get",
         "document_delete",

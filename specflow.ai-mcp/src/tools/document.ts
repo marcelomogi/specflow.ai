@@ -50,7 +50,37 @@ export const ImproveRationaleSchema = z.object({
   document_id: z.string().uuid(),
 });
 
+export const DocumentListSchema = z.object({
+  doc_type: z.enum(["prd", "policy", "contract", "runbook"]).optional(),
+  status: z.enum(["draft", "approved"]).optional(),
+});
+
 // ─── Handlers ─────────────────────────────────────────────────────────────────
+
+export async function documentList(
+  input: z.infer<typeof DocumentListSchema>
+) {
+  const sb = getSupabase();
+
+  let query = sb
+    .from("document")
+    .select("document_id, title, doc_type, status, created_at, updated_at")
+    .order("updated_at", { ascending: false });
+
+  if (input.doc_type) {
+    query = query.eq("doc_type", input.doc_type);
+  }
+
+  if (input.status) {
+    query = query.eq("status", input.status);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw new McpError(error.message, "DB_ERROR");
+
+  return data ?? [];
+}
 
 export async function documentCreate(
   input: z.infer<typeof DocumentCreateSchema>
