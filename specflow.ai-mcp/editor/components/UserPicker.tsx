@@ -1,11 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { MOCK_USERS } from '@/lib/users'
 
 export default function UserPicker() {
-  const router = useRouter()
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm flex flex-col gap-6">
@@ -20,7 +17,7 @@ export default function UserPicker() {
           {MOCK_USERS.map(user => (
             <button
               key={user.id}
-              onClick={() => router.push(`/api/select-owner?owner_id=${user.id}`)}
+              onClick={() => { window.location.href = `/api/select-owner?owner_id=${user.id}` }}
               className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl px-5 py-4 text-left hover:border-indigo-400 hover:shadow-sm transition"
             >
               <span className="text-3xl">{user.emoji}</span>
