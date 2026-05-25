@@ -128,7 +128,9 @@ Relation type definitions:
 - similar      : both blocks cover the same topic without contradiction, dependency, or evolutionary relationship. They coexist without conflict.
 - none         : no meaningful relationship. The blocks are unrelated or only superficially similar.
 
-Rules:
+CRITICAL RULES:
+- The "relation_type" field MUST be EXACTLY one of these five strings: conflict, depends_on, evolves_from, similar, none
+- Do NOT translate these strings to any other language. Do NOT use synonyms. Use the exact strings above.
 - Be conservative. Only classify when there is clear textual evidence.
 - Each candidate receives exactly one classification.
 - Return ONLY valid JSON — no markdown, no preamble, no trailing text.
@@ -137,11 +139,36 @@ Output format (one entry per candidate, in the same order):
 [
   {
     "block_id": "uuid",
-    "relation_type": "conflict | depends_on | evolves_from | similar | none",
-    "confidence": 0.0,
+    "relation_type": "conflict",
+    "confidence": 0.95,
     "explanation": "one sentence explaining the classification"
   }
-]`.trim();
+]
+
+IMPORTANT: relation_type must be one of: conflict, depends_on, evolves_from, similar, none`.trim();
+
+/**
+ * Map of known English variants → canonical relation type.
+ * Applied after basic normalization (lowercase + underscores).
+ * The LLM prompt already enforces exact English strings; this is a
+ * last-resort safety net for minor deviations (plural, typo, synonym).
+ */
+const RELATION_TYPE_ALIASES: Record<string, RelationTypeWithNone> = {
+  conflict:     "conflict",
+  conflicts:    "conflict",
+  conflicting:  "conflict",
+  contradicts:  "conflict",
+  depends_on:   "depends_on",
+  dependency:   "depends_on",
+  evolves_from: "evolves_from",
+  evolved_from: "evolves_from",
+  supersedes:   "evolves_from",
+  similar:      "similar",
+  similarity:   "similar",
+  none:         "none",
+  no_relation:  "none",
+  unrelated:    "none",
+};
 
 async function classifyRelations(
   sourceContent: string,
@@ -178,15 +205,33 @@ Classify the relation from the source block to each candidate.`;
 
   const array = Array.isArray(parsed) ? parsed : [];
 
-  return array.filter(
-    (item): item is LLMClassification =>
-      typeof item === "object" &&
-      item !== null &&
-      typeof (item as Record<string, unknown>).block_id === "string" &&
-      typeof (item as Record<string, unknown>).relation_type === "string" &&
-      typeof (item as Record<string, unknown>).confidence === "number" &&
-      typeof (item as Record<string, unknown>).explanation === "string"
-  );
+  return array
+    .filter(
+      (item): item is Record<string, unknown> =>
+        typeof item === "object" &&
+        item !== null &&
+        typeof (item as Record<string, unknown>).block_id === "string" &&
+        typeof (item as Record<string, unknown>).relation_type === "string" &&
+        typeof (item as Record<string, unknown>).explanation === "string"
+    )
+    .map((item) => {
+      // Step 1: basic normalization — lowercase, trim, spaces → underscores
+      const raw = (item.relation_type as string).toLowerCase().trim().replace(/\s+/g, "_");
+      // Step 2: alias lookup (handles Portuguese + English variants)
+      const canonical: RelationTypeWithNone = RELATION_TYPE_ALIASES[raw] ?? (raw as RelationTypeWithNone);
+
+      console.log(`[classifyRelations] block_id=${item.block_id} raw="${item.relation_type}" → normalized="${raw}" → canonical="${canonical}"`);
+
+      return {
+        block_id: item.block_id as string,
+        relation_type: canonical,
+        // Accept number or numeric string; default to 0 if unparseable
+        confidence: Number.isFinite(Number(item.confidence))
+          ? Number(item.confidence)
+          : 0,
+        explanation: item.explanation as string,
+      };
+    });
 }
 
 // ─── Handlers ─────────────────────────────────────────────────────────────────

@@ -30,7 +30,11 @@
       "Bash(node -e \"const {execSync}=require\\('child_process'\\); try{console.log\\(execSync\\('ngrok --version',{stdio:'pipe'}\\).toString\\(\\)\\)}catch\\(e\\){console.log\\('stderr:',e.stderr?.toString\\(\\)\\)}\")",
       "Bash(npm bin *)",
       "Bash(git remote *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "mcp__91820278-ccd3-4d35-8efd-c6455621303e__list_projects",
+      "mcp__91820278-ccd3-4d35-8efd-c6455621303e__execute_sql",
+      "mcp__91820278-ccd3-4d35-8efd-c6455621303e__list_edge_functions",
+      "PowerShell(Get-Process -Id 8504)"
     ]
   }
 }

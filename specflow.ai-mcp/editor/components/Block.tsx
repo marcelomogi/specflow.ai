@@ -136,9 +136,10 @@ export default function Block({
     try {
       const results = await callMCP<DetectedRelation[]>('relation_detect', {
         block_id: blockId,
-        // No relation_types filter — let LLM classify all types; server already excludes 'none'
-        threshold: 0.75,
-      })
+        // No relation_types filter — LLM classifies and excludes 'none'
+        // Threshold kept low so more candidates reach the LLM; it filters noise
+        threshold: 0.5,
+      }, 30_000) // 30s — LLM classification can be slow on free-tier models
 
       console.log('[detectConflicts] resultados brutos:', results)
 
@@ -214,8 +215,47 @@ export default function Block({
     onSelect(block.block_id, (data ?? []) as BlockVersion[])
   }
 
+  // ── Load target block info for registered relations ──────────────────────
+  const [relationsInfo, setRelationsInfo] = useState<Record<string, { content: string; document_title: string }>>({})
+
+  useEffect(() => {
+    if (relations.length === 0) return
+    const ids = relations.map(r => r.target_block_id)
+    sb.from('block')
+      .select('block_id, content, document_id')
+      .in('block_id', ids)
+      .then(async ({ data: blockRows }) => {
+        if (!blockRows || blockRows.length === 0) return
+        const docIds = Array.from(new Set(blockRows.map(b => b.document_id)))
+        const { data: docs } = await sb
+          .from('document')
+          .select('document_id, title')
+          .in('document_id', docIds)
+        const docTitleMap: Record<string, string> = {}
+        for (const d of docs ?? []) docTitleMap[d.document_id] = d.title
+        const map: Record<string, { content: string; document_title: string }> = {}
+        for (const b of blockRows) {
+          map[b.block_id] = {
+            content: b.content,
+            document_title: docTitleMap[b.document_id] ?? 'Documento desconhecido',
+          }
+        }
+        setRelationsInfo(map)
+      })
+  }, [relations.length]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const RELATION_META: Record<string, { icon: string; label: string; classes: string; excerptClass: string }> = {
+    conflict:     { icon: '⚠️', label: 'Conflito com',  classes: 'bg-red-50 border-red-100 text-red-700',       excerptClass: 'text-red-400' },
+    depends_on:   { icon: '🔗', label: 'Depende de',    classes: 'bg-blue-50 border-blue-100 text-blue-700',     excerptClass: 'text-blue-400' },
+    evolves_from: { icon: '🔄', label: 'Evoluiu de',    classes: 'bg-indigo-50 border-indigo-100 text-indigo-700', excerptClass: 'text-indigo-400' },
+    similar:      { icon: '📄', label: 'Similar a',     classes: 'bg-gray-50 border-gray-200 text-gray-600',     excerptClass: 'text-gray-400' },
+  }
+
   const isFrozen = block.status === 'frozen'
   const isConflict = block.status === 'conflict'
+
+  // Relations shown as info (conflict ones are handled by ConflictBanner when isConflict)
+  const infoRelations = relations.filter(r => !(isConflict && r.relation_type === 'conflict'))
 
   return (
     <div
@@ -283,6 +323,43 @@ export default function Block({
         />
       )}
 
+      {/* Registered relations from DB — always shown when present */}
+      {infoRelations.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          {infoRelations.map(r => {
+            const meta = RELATION_META[r.relation_type] ?? RELATION_META.similar
+            const info = relationsInfo[r.target_block_id]
+            return (
+              <div
+                key={r.relation_id}
+                className={`flex items-start gap-2 rounded-lg px-2.5 py-2 text-xs border ${meta.classes}`}
+              >
+                <span className="shrink-0">{meta.icon}</span>
+                <div className="min-w-0 flex-1">
+                  <p>
+                    <span className="font-semibold">{meta.label}</span>{' '}
+                    <span className="opacity-80">{info?.document_title ?? '…'}</span>
+                    {r.confidence != null && (
+                      <span className="ml-1.5 opacity-60 tabular-nums">
+                        ({Math.round(r.confidence * 100)}%)
+                      </span>
+                    )}
+                  </p>
+                  {info?.content && (
+                    <p className={`mt-0.5 italic line-clamp-2 ${meta.excerptClass}`}>
+                      &ldquo;{info.content.slice(0, 150)}{info.content.length > 150 ? '…' : ''}&rdquo;
+                    </p>
+                  )}
+                  {r.description && (
+                    <p className={`mt-0.5 opacity-70`}>{r.description}</p>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
       {/* Pending relation banners (from relation_detect, awaiting PM confirmation) */}
       {pendingConflicts.map((pending, i) => {
         const { relation_type, source, similarity_score, confidence, explanation, document_title, content_excerpt } = pending.detected
@@ -313,6 +390,12 @@ export default function Block({
               {/* Header row */}
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="font-semibold">{label}</p>
+                {/* Debug: show raw relation_type when label falls back to generic */}
+                {!RELATION_LABEL[relation_type] && (
+                  <span className="font-mono text-[10px] bg-gray-100 text-gray-500 px-1 rounded">
+                    {relation_type}
+                  </span>
+                )}
 
                 {/* Source badge */}
                 {source === 'graph' ? (
@@ -334,7 +417,9 @@ export default function Block({
                 ) : null}
 
                 {/* LLM confidence */}
-                <span className="text-amber-500 tabular-nums">{pct}% confiança</span>
+                {Number.isFinite(pct) && (
+                  <span className="text-amber-500 tabular-nums">{pct}% confiança</span>
+                )}
               </div>
 
               {/* Relation description */}

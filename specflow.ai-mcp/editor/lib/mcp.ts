@@ -29,7 +29,8 @@ async function parseMcpResponse(res: Response): Promise<unknown> {
 
 export async function callMCP<T = unknown>(
   tool: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
+  timeoutMs = 8000,
 ): Promise<T> {
   let res: Response
   try {
@@ -46,7 +47,7 @@ export async function callMCP<T = unknown>(
         params: { name: tool, arguments: args },
         id: Date.now(),
       }),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(timeoutMs),
     })
   } catch {
     throw new McpOfflineError()

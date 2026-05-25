@@ -1,0 +1,93 @@
+
+> specflowia-mcp@0.1.0 start
+> node dist/index.js
+
+[specflowia-mcp] stdio transport ready
+[specflowia-mcp] HTTP transport listening on port 3001
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente.","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente.","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente.","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"2bab9a4e-b242-42a6-be05-3ca62acbc23c","content":"O agendamento de férias deve respeitar integralmente as regras e limites definidos na Política de Férias e Ausências vigente, com solicitação prévia de 30 dias e aprovação formal do gestor direto","rationale":"Procedimento de agendamento — depende da Política de Férias.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"2bab9a4e-b242-42a6-be05-3ca62acbc23c","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=ecf152c2-1204-4b13-9a51-6d17fcb22b6e raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"2bab9a4e-b242-42a6-be05-3ca62acbc23c","content":"O agendamento de férias deve respeitar integralmente as regras e limites definidos na Política de Férias e Ausências vigente, com solicitação prévia de 30 dias e aprovação formal do gestor direto","rationale":"Procedimento de agendamento — depende da Política de Férias.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"2bab9a4e-b242-42a6-be05-3ca62acbc23c","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=ecf152c2-1204-4b13-9a51-6d17fcb22b6e raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","content":"Os colaboradores têm direito a 30 dias corridos de férias anuais remuneradas após completar 12 meses de trabalho, conforme a legislação trabalhista vigente","rationale":"Regra principal de férias — alinhada com a CLT.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"ecf152c2-1204-4b13-9a51-6d17fcb22b6e","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=2bab9a4e-b242-42a6-be05-3ca62acbc23c raw="depends_on" → normalized="depends_on" → canonical="depends_on"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=7063cf47-30b1-4ad5-b08b-aca14161e875 raw="none" → normalized="none" → canonical="none"
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] block_update {"block_id":"2bab9a4e-b242-42a6-be05-3ca62acbc23c","content":"O agendamento de férias deve respeitar integralmente as regras e limites definidos na Política de Férias e Ausências vigente, com solicitação prévia de 30 dias e aprovação formal do gestor direto","rationale":"Procedimento de agendamento — depende da Política de Férias.","change_source":"human"}
+[specflowia-mcp] HTTP POST /mcp
+[specflowia-mcp] relation_detect {"block_id":"2bab9a4e-b242-42a6-be05-3ca62acbc23c","threshold":0.5}
+[classifyRelations] block_id=7d8bf739-222f-4785-8888-229f2330e6f2 raw="similar" → normalized="similar" → canonical="similar"
+[classifyRelations] block_id=56650e02-a3dc-4267-9cfa-a7ae28dfcb28 raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=ecf152c2-1204-4b13-9a51-6d17fcb22b6e raw="conflict" → normalized="conflict" → canonical="conflict"
+[classifyRelations] block_id=bb9caf02-1f34-425d-b8cd-9f7a31961417 raw="conflict" → normalized="conflict" → canonical="conflict"
