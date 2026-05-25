@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const MCP_URL = process.env.NEXT_PUBLIC_MCP_URL ?? 'http://localhost:3001/mcp'
+// Server-side only — use MCP_URL (not NEXT_PUBLIC_) so the internal Railway
+// network address is never baked into the client bundle.
+const MCP_URL = process.env.MCP_URL ?? 'http://localhost:3001/mcp'
 
 // document_ingest can take a while: LLM chunking + N embedding calls.
 // Use a 120-second timeout so large documents don't time out.

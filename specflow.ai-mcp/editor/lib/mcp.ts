@@ -1,4 +1,7 @@
-const MCP_URL = process.env.NEXT_PUBLIC_MCP_URL ?? 'http://localhost:3001/mcp'
+// Always use the local proxy route so this works in both browser and server contexts.
+// The proxy (app/api/mcp/route.ts) reads MCP_URL (server-side env var) and forwards
+// to the real MCP server — allowing Railway's internal network to be used safely.
+const MCP_URL = '/api/mcp'
 
 export class McpOfflineError extends Error {
   constructor() {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const MCP_URL = process.env.NEXT_PUBLIC_MCP_URL ?? 'http://localhost:3001/mcp'
+const MCP_URL = process.env.MCP_URL ?? 'http://localhost:3001/mcp'
 
 export async function POST(req: NextRequest) {
   const { document_id } = await req.json()
