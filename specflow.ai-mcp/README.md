@@ -2,7 +2,59 @@
 
 > Integrity layer for complex technical documents.
 
-SpecFlowIA models a document as a dependency graph between content blocks and uses a consistency agent to automatically detect semantic contradictions between related sections when a decision changes.
+---
+
+## O que é o SpecFlowIA
+
+Toda organização acumula documentos. PRDs, políticas, contratos, runbooks — textos que registram decisões que custaram tempo, debate e dinheiro para serem tomadas.
+
+O problema é que essas decisões **mudam**. E quando mudam, ninguém atualiza tudo que depende delas.
+
+### A dor real da gestão de conhecimento ao longo do tempo
+
+Imagine que sua empresa define: *"O período mínimo de aviso para férias é 30 dias."* Essa decisão está em três documentos diferentes — a Política de Férias, o Regulamento Interno de RH e o Contrato Padrão de Trabalho. Seis meses depois, o RH atualiza a Política de Férias para 15 dias por pressão trabalhista. Mas ninguém percebe que os outros dois documentos agora contradizem a nova regra.
+
+Esse é o estado padrão de qualquer base de conhecimento com mais de um ano de vida:
+
+- **Contradições invisíveis** entre documentos que ninguém compara manualmente
+- **Decisões órfãs** — regras que perderam o contexto de por que existiam
+- **Conhecimento implícito** que mora na cabeça de quem estava na reunião, não no documento
+- **Atualizações parciais** que criam versões paralelas da verdade sem que ninguém saiba
+
+O resultado prático: times perdidos em inconsistências, onboarding ineficiente, auditorias problemáticas e decisões tomadas com base em documentos desatualizados.
+
+### O que o SpecFlowIA faz
+
+O SpecFlowIA trata documentos como o que eles realmente são: **grafos de decisões interdependentes**, não arquivos de texto.
+
+Cada parágrafo relevante vira um bloco com identidade própria, histórico de versões e justificativa explícita (*por que* essa decisão existe). Quando um bloco é editado, o sistema automaticamente busca por contradições semânticas em toda a base de conhecimento — usando embeddings vetoriais e classificação por LLM — e apresenta ao responsável os conflitos encontrados para resolução consciente.
+
+Nenhuma contradição passa despercebida. Nenhuma decisão é sobrescrita silenciosamente.
+
+> **Nota sobre o editor web:** a interface em `/editor` é uma ferramenta temporária desenvolvida exclusivamente para demonstrar e testar o comportamento do sistema durante a avaliação. O produto final é concebido como uma camada de integridade que se integra ao fluxo de trabalho existente via agente (Claude.ai) e APIs — não como um editor standalone.
+
+---
+
+## Demo
+
+**URL:** [https://specflow-editor-production.up.railway.app](https://specflow-editor-production.up.railway.app)
+
+### Como acessar
+
+Na tela inicial, selecione o usuário **PM Beta** para entrar no ambiente de demonstração. Não é necessário login ou senha.
+
+### Como ver os conflitos em ação
+
+A base de demonstração já contém documentos com regras intencionalmente sobrepostas (políticas de férias, RH e contratos). Para acionar a detecção:
+
+1. Abra qualquer documento com status **draft**
+2. Clique em um bloco para editar e faça qualquer alteração no texto
+3. Clique **fora do bloco** para salvar — isso dispara a análise semântica em background
+4. Aguarde alguns segundos — os **banners de relação** (conflito, dependência, similaridade) aparecerão automaticamente no bloco
+
+Cada banner mostra o tipo de relação detectada, o documento de origem, o trecho conflitante e o grau de confiança da classificação. O PM pode então **Registrar** a relação (persiste no grafo de conhecimento) ou **Ignorar**.
+
+Para ver relações já registradas de documentos aprovados, basta abrir qualquer documento com status **approved** — os blocos já exibem suas relações diretamente, sem precisar editar.
 
 ---
 
