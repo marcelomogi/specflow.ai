@@ -102,12 +102,13 @@ export default function Block({
 
     try {
       // block_update returns only {block_id, version, updated_at} — merge with current
+      // 20 s: production adds a proxy hop + embedding generation (~3–8 s each)
       const patch = await callMCP<Partial<BlockType>>('block_update', {
         block_id: current.block_id,
         content,
         rationale: current.rationale ?? '',
         change_source: 'human',
-      })
+      }, 20_000)
       onBlockChange({ ...current, content, ...patch })
 
       // Detect conflicts in background — intentionally not awaited

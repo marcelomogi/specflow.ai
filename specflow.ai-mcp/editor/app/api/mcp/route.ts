@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Server-side only — never exposed to the browser bundle.
-// In Railway: set MCP_URL to the internal URL  (e.g. https://specflowai.railway.internal/mcp)
+// In Railway: set MCP_URL to the internal URL (e.g. http://specflowai.railway.internal:8080/mcp)
+// or the public URL (https://specflow-mcp-production.up.railway.app/mcp)
 // Locally: http://localhost:3001/mcp
 const MCP_URL = process.env.MCP_URL ?? 'http://localhost:3001/mcp'
-
-// relation_detect can take up to 30 s (LLM classification).
-// ingest can take up to 120 s. Use the larger ceiling.
-const PROXY_TIMEOUT_MS = 125_000
 
 export async function POST(req: NextRequest) {
   let body: unknown
@@ -17,6 +14,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: { message: 'Invalid request body' } }, { status: 400 })
   }
 
+  console.log('[/api/mcp] forwarding to', MCP_URL)
+
+  // Forward the client's abort signal so if the browser times out,
+  // the upstream request is cancelled immediately.
   let mcpRes: Response
   try {
     mcpRes = await fetch(MCP_URL, {
@@ -26,29 +27,23 @@ export async function POST(req: NextRequest) {
         Accept: 'application/json, text/event-stream',
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(PROXY_TIMEOUT_MS),
+      signal: req.signal,
     })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
+    console.error('[/api/mcp] fetch failed →', MCP_URL, '|', msg)
     return NextResponse.json(
       { error: { message: `MCP server unreachable: ${msg}` } },
       { status: 502 },
     )
   }
 
-  const contentType = mcpRes.headers.get('content-type') ?? ''
+  const contentType = mcpRes.headers.get('content-type') ?? 'application/json'
 
-  // SSE response — buffer the full text and re-send with the correct content-type
-  // so the client-side parseMcpResponse can handle it exactly as before.
-  if (contentType.includes('text/event-stream')) {
-    const text = await mcpRes.text()
-    return new NextResponse(text, {
-      status: mcpRes.status,
-      headers: { 'Content-Type': 'text/event-stream' },
-    })
-  }
-
-  // Regular JSON response — forward as-is
-  const data = await mcpRes.json()
-  return NextResponse.json(data, { status: mcpRes.status })
+  // Stream the body directly — never buffer.
+  // Works for both JSON and SSE; the client-side parseMcpResponse handles either.
+  return new NextResponse(mcpRes.body, {
+    status: mcpRes.status,
+    headers: { 'Content-Type': contentType },
+  })
 }
